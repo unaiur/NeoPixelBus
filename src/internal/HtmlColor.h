@@ -28,6 +28,20 @@ License along with NeoPixel.  If not, see
 #include <Arduino.h>
 #include "RgbColor.h"
 
+#if defined(USE_CSS3_COLORS)
+#define MAX_HTML_COLOR_NAME_LEN 21
+#else
+#define MAX_HTML_COLOR_NAME_LEN 8
+#endif
+
+// ------------------------------------------------------------------------
+// HtmlColor represents an association between a name and a HTML color code
+// ------------------------------------------------------------------------
+struct HtmlColorName
+{
+    PGM_P Name;
+    uint32_t Color;
+};
 
 // ------------------------------------------------------------------------
 // HtmlColor represents a color object that is represented by a single uint32
@@ -76,6 +90,23 @@ struct HtmlColor
     };
 
     // ------------------------------------------------------------------------
+    // Parse a HTML4/CSS3 color name
+    //
+    // name - the color name
+    //
+    // It accepts all standard HTML4 names and, if USE_CSS3_COLORS macro is
+    // defined, the color names defined in CSS3 also
+    // ------------------------------------------------------------------------
+    bool Parse(const char* name);
+
+    // ------------------------------------------------------------------------
+    // Converts this color code to its HTML4/CSS3 name
+    //
+    // name - array of MAX_HTML_COLOR_NAME_LEN character to store the name
+    // ------------------------------------------------------------------------
+    void ToString(char name[MAX_HTML_COLOR_NAME_LEN]) const;
+
+    // ------------------------------------------------------------------------
     // BilinearBlend between four colors by the amount defined by 2d variable
     // c00 - upper left quadrant color
     // c01 - upper right quadrant color
@@ -101,5 +132,11 @@ struct HtmlColor
     // 0x0000ff is blue
     // ------------------------------------------------------------------------
     uint32_t Color;
+
+    // ------------------------------------------------------------------------
+    // Array with all color names and its corresponding color codes
+    // The array ends with a NULL color name.
+    // ------------------------------------------------------------------------
+    static const HtmlColorName ColorNames[] PROGMEM;
 };
 
