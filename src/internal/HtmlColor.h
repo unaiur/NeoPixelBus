@@ -28,6 +28,7 @@ License along with NeoPixel.  If not, see
 #include <Arduino.h>
 #include "RgbColor.h"
 
+struct NamedColor;
 
 // ------------------------------------------------------------------------
 // HtmlColor represents a color object that is represented by a single uint32
@@ -76,6 +77,21 @@ struct HtmlColor
     };
 
     // ------------------------------------------------------------------------
+    // Parse an HTML4/CSS3 color name
+    //
+    // name - the color name
+    //
+    // It accepts all standard HTML4 names, or if CSS3_COLORS macro is defined,
+    // also the color names defined in CSS3
+    // ------------------------------------------------------------------------
+    bool Parse(String name);
+
+    // ------------------------------------------------------------------------
+    // Converts a color to the HTML4/CSS3 name
+    // ------------------------------------------------------------------------
+    operator String() const;
+
+    // ------------------------------------------------------------------------
     // BilinearBlend between four colors by the amount defined by 2d variable
     // c00 - upper left quadrant color
     // c01 - upper right quadrant color
@@ -101,5 +117,6 @@ struct HtmlColor
     // 0x0000ff is blue
     // ------------------------------------------------------------------------
     uint32_t Color;
+    static const NamedColor namedColors[] PROGMEM;
 };
 
