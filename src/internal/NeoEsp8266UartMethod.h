@@ -72,9 +72,8 @@ public:
 
     bool IsReadyToUpdate() const
     {
-        uint32_t delta = micros() - _endTime;
-
-        return (delta >= 50L && delta <= (4294967296L - getPixelTime()));
+        uint32_t delta = micros() - _startTime;
+        return delta >= getPixelTime();
     }
 
     void Initialize()
@@ -84,7 +83,7 @@ public:
         CLEAR_PERI_REG_MASK(UART_CONF0(UART1), UART1_INV_MASK);
         SET_PERI_REG_MASK(UART_CONF0(UART1), (BIT(22)));
 
-        _endTime = micros();
+        _startTime = micros() - (getPixelTime() - 50); // After initialization, wait 50 microseconds to force a reset
     }
 
     void Update()
@@ -104,7 +103,7 @@ public:
         // since uart is async buffer send, we have to calc the endtime that it will take
         // to correctly manage the data latch in the above code
         // add the calculated time to the current time 
-        _endTime = micros() + getPixelTime();
+        _startTime = micros();
 
         // esp hardware uart sending of data
         esp8266_uart1_send_pixels(_pixels, _pixels + _sizePixels);
@@ -123,12 +122,12 @@ public:
 private:
     uint32_t getPixelTime() const
     {
-        return (T_SPEED::ByteSendTimeUs * _sizePixels);
+        return (T_SPEED::ByteSendTimeUs * _sizePixels) + 50;
     };
 
     size_t    _sizePixels;   // Size of '_pixels' buffer below
     uint8_t* _pixels;        // Holds LED color values
-    uint32_t _endTime;       // Latch timing reference
+    uint32_t _startTime;     // Microsecond count when last update started
 };
 
 typedef NeoEsp8266UartMethodBase<NeoEsp8266UartSpeed800Kbps> NeoEsp8266Uart800KbpsMethod;
