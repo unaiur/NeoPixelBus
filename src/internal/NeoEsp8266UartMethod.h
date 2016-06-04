@@ -121,7 +121,7 @@ public:
         return _sizePixels;
     };
 
-private:
+protected:
     uint32_t getPixelTime() const
     {
         return (T_SPEED::ByteSendTimeUs * _sizePixels) + 50;

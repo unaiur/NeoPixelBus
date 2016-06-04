@@ -54,6 +54,7 @@ License along with NeoPixel.  If not, see
 #if defined(ARDUINO_ARCH_ESP8266)
 #include "internal/NeoEsp8266DmaMethod.h"
 #include "internal/NeoEsp8266UartMethod.h"
+#include "internal/NeoEsp8266AsyncUartMethod.h"
 #include "internal/NeoEsp8266BitBangMethod.h"
 #elif defined(__arm__) // must be before ARDUINO_ARCH_AVR due to Teensy incorrectly having it set
 #include "internal/NeoArmMethod.h"
