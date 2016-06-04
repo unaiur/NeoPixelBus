@@ -35,8 +35,8 @@ extern "C"
 }
 
 // due to linker overriding ICACHE_RAM_ATTR for cpp files, this function was
-// moved into a NeoPixelEsp8266.c file.
-extern "C" void ICACHE_RAM_ATTR esp8266_uart1_send_pixels(uint8_t* pixels, uint8_t* end);
+// moved into a NeoPixelEsp8266-Uart.c file.
+extern "C" uint8_t* ICACHE_RAM_ATTR esp8266_uart1_fill_fifo(uint8_t* pixels, uint8_t* end);
 
 class NeoEsp8266UartSpeed800Kbps
 {
@@ -106,7 +106,9 @@ public:
         _startTime = micros();
 
         // esp hardware uart sending of data
-        esp8266_uart1_send_pixels(_pixels, _pixels + _sizePixels);
+        uint8_t *ptr = _pixels, *end = _pixels + _sizePixels;
+        while (ptr != end)
+            ptr = esp8266_uart1_fill_fifo(ptr, end);
     }
 
     uint8_t* getPixels() const
